@@ -10,10 +10,6 @@
 class Dark
 {
 public:
-    Dark() = default;
-    virtual ~Dark() = default;
-
-public:
     float m_Mass;
     float m_Location[3];
     float m_Velocity[3];
@@ -24,10 +20,6 @@ public:
 class Star
 {
 public:
-    Star() = default;
-    virtual ~Star() = default;
-
-public:
     float m_Mass;
     float m_Location[3];
     float m_Velocity[3];
@@ -37,10 +29,6 @@ public:
 
 class Info
 {
-public:
-    Info() = default;
-    virtual ~Info() = default;
-
 public:
     double m_N1;
     int    m_Count;
@@ -70,7 +58,7 @@ extern "C" void Load(const char* fileName)
     if(!fileStream.is_open()) return;
 
     fileStream.read((char*)&fileHeader, sizeof(Info));
-
+    
     Darks.resize(fileHeader.m_DarkCnt);
     Stars.resize(fileHeader.m_StarCnt);
 
@@ -84,12 +72,32 @@ extern "C" void Load(const char* fileName)
         fileStream.read((char*)&Stars[i], sizeof(Star));
     }
 
-    printf("%d %d\n",fileHeader.m_DarkCnt, fileHeader.m_StarCnt);
-
     fileStream.close();
 }
 
-extern "C" void Fill()
+extern "C" void Fill(int* Cnt, float* LVM)
 {
+    *Cnt = fileHeader.m_Count;
 
+    for(int i = 0; i < fileHeader.m_DarkCnt; ++i)
+    {
+        *LVM++ = Darks[i].m_Location[0];
+        *LVM++ = Darks[i].m_Location[1];
+        *LVM++ = Darks[i].m_Location[2];
+        *LVM++ = Darks[i].m_Velocity[0];
+        *LVM++ = Darks[i].m_Velocity[1];
+        *LVM++ = Darks[i].m_Velocity[2];
+        *LVM++ = Darks[i].m_Mass;
+    }
+
+    for(int i = 0; i < fileHeader.m_StarCnt; ++i)
+    {
+        *LVM++ = Stars[i].m_Location[0];
+        *LVM++ = Stars[i].m_Location[1];
+        *LVM++ = Stars[i].m_Location[2];
+        *LVM++ = Stars[i].m_Velocity[0];
+        *LVM++ = Stars[i].m_Velocity[1];
+        *LVM++ = Stars[i].m_Velocity[2];
+        *LVM++ = Stars[i].m_Mass;
+    }
 }

@@ -1,10 +1,7 @@
 import taichi as ti
-import numpy as np
-import ctypes
+import Loader
 
 ti.init(arch=ti.cuda)
-
-
 
 def main():
     pass
