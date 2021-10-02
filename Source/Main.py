@@ -1,11 +1,66 @@
 import taichi as ti
 import Loader
+import copy
 
-Loader.Load('Galaxy20K.bin')
+UseConfig = 5
+
+Configs = list()
+Config  = dict()
+
+#Scene 0
+Config['fileName']    = 'Galaxy20K.bin'
+Config['subStep']     = 5
+Config['subStepTime'] = 0.003
+Config['cameraPos']   = (0, 0, 60)
+Config['Radious']     = 0.1
+Configs.append(copy.deepcopy(Config))
+
+#Scene 1
+Config['fileName']    = 'Dubinski.tab'
+Config['subStep']     = 30
+Config['subStepTime'] = 0.01
+Config['cameraPos']   = (0, 0, 80)
+Config['Radious']     = 0.1
+Configs.append(copy.deepcopy(Config))
+
+#Scene 2
+Config['fileName']    = 'Tab65536.tab'
+Config['subStep']     = 30
+Config['subStepTime'] = 0.01
+Config['cameraPos']   = (0, 0, 60)
+Config['Radious']     = 0.1
+Configs.append(copy.deepcopy(Config))
+
+#Scene 3
+Config['fileName']    = 'Stars.dat'
+Config['subStep']     = 30
+Config['subStepTime'] = 0.001
+Config['cameraPos']   = (0, 0, 200)
+Config['Radious']     = 0.1
+Configs.append(copy.deepcopy(Config))
+
+#Scene 4
+Config['fileName']    = 'K17C.snap'
+Config['subStep']     = 30
+Config['subStepTime'] = 0.003
+Config['cameraPos']   = (0, 0, 20)
+Config['Radious']     = 0.03
+Configs.append(copy.deepcopy(Config))
+
+#Scene 5
+Config['fileName']    = 'K17HP.snap'
+Config['subStep']     = 30
+Config['subStepTime'] = 0.003
+Config['cameraPos']   = (15, 15, 15)
+Config['Radious']     = 0.03
+Configs.append(copy.deepcopy(Config))
+
+Loader.Load(Configs[UseConfig]['fileName'])
 starCnt,starData = Loader.Fill()
+Loader.Reset() # Clear Useless Buffer
 
-subStep = 5
-subStepTime = 0.003
+subStep     = Configs[UseConfig]['subStep']
+subStepTime = Configs[UseConfig]['subStepTime']
 
 ti.init(arch=ti.cuda)
 
@@ -60,7 +115,7 @@ def Export(i: int):
     mesh_writer = ti.PLYWriter(num_vertices=starCnt, face_type="quad")
     mesh_writer.add_vertex_pos(npL[:, 0], npL[:, 1], npL[:, 2])
 
-    mesh_writer.export_frame(i, 'S.ply')
+    mesh_writer.export_frame_ascii(i, 'S.ply')
 
     print('%03d'%(i))
 
@@ -72,10 +127,11 @@ def main():
     Scene = ti.ui.Scene()
     Camera = ti.ui.make_camera()
 
-    Camera.position(0, 0, 60)
+    Camera.position(*Configs[UseConfig]['cameraPos'])
     Camera.lookat(0, 0, 0)
-    Camera.up(1, 0, 0)
     Camera.fov(75)
+
+    FrameIndex = 0
 
     try:
         while mainWindow.running:
@@ -86,13 +142,18 @@ def main():
             Scene.point_light(pos=( 80,  80,  80), color=(0.4, 0.6, 0.9))
             Scene.point_light(pos=(-80, -80, -80), color=(0.6, 0.5, 0.9))
 
-            Scene.particles(starLocation, radius=0.1, color=(0.5,0.5,1))
+            Scene.particles(starLocation, radius=Configs[UseConfig]['Radious'], color=(0.5,0.5,1))
 
             Canvas.scene(Scene)
             mainWindow.show()
+
+            FrameIndex += 1
+            if False and not FrameIndex % 30:
+                Export(FrameIndex//30)
 
     except Exception as Error:
         print(Error)
 
 if __name__=='__main__':
+    print('Count:',starCnt)
     main()
