@@ -32,3 +32,7 @@ Edit Main.py:
 <img src="readMe/Scene_05.gif" height="246" />
 <img src="readMe/Scene_06.gif" height="246" />
 </p>
+
+| Scene 01 | Scene 02 | Scene 03 |
+:-:|:-:|:-:
+| ![Scene](readMe/Scene_01.gif) | ![Scene](readMe/Scene_02.gif) | ![Scene](readMe/Scene_03.gif) |
