@@ -4,6 +4,9 @@ import Loader
 Loader.Load('Galaxy20K.bin')
 starCnt,starData = Loader.Fill()
 
+subStep = 5
+subStepTime = 0.003
+
 ti.init(arch=ti.cuda)
 
 starLocation = ti.Vector.field(3, dtype=ti.f32, shape=starCnt)
@@ -29,7 +32,7 @@ def Force(i,j):
         Dir = starLocation[j] - starLocation[i]
         Dis = Dir.norm()
         Dis = Dis * Dis * Dis
-        Res = starMass[j] * Dir / Dis
+        Res = starMass[j] * Dir / Dis # No Mass
     return Res
 
 @ti.kernel
@@ -42,14 +45,14 @@ def ComputeForce():
 @ti.kernel
 def Forward(T: ti.f32):
     for i in starVelocity:
-        starVelocity[i] += T * starForce[i]
+        starVelocity[i] += T * starForce[i] # No Mass
     for i in starLocation:
         starLocation[i] += T * starVelocity[i]
 
 def Step():
     ComputeForce()
-    for i in range(30):
-        Forward(0.001)
+    for i in range(subStep):
+        Forward(subStepTime)
 
 def Export(i: int):
     npL = starLocation.to_numpy()
@@ -64,10 +67,30 @@ def Export(i: int):
 def main():
     Init(starData)
 
+    mainWindow = ti.ui.Window("Stars", (1024, 768))
+    Canvas = mainWindow.get_canvas()
+    Scene = ti.ui.Scene()
+    Camera = ti.ui.make_camera()
+
+    Camera.position(0, 0, 60)
+    Camera.lookat(0, 0, 0)
+    Camera.up(1, 0, 0)
+    Camera.fov(75)
+
     try:
-        for i in range(100):
+        while mainWindow.running:
             Step()
-            Export(i)
+            
+            Scene.set_camera(Camera)
+            Scene.ambient_light((0.4, 0.4, 1.0))
+            Scene.point_light(pos=( 80,  80,  80), color=(0.4, 0.6, 0.9))
+            Scene.point_light(pos=(-80, -80, -80), color=(0.6, 0.5, 0.9))
+
+            Scene.particles(starLocation, radius=0.1, color=(0.5,0.5,1))
+
+            Canvas.scene(Scene)
+            mainWindow.show()
+
     except Exception as Error:
         print(Error)
 
