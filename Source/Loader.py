@@ -3,10 +3,11 @@ from ctypes import *
 
 starCount = (c_int*1)(0)
 
+libName = './Loader.dll'
+
 try:
-    Lib = cdll.LoadLibrary('./Loader.so')
+    Lib = cdll.LoadLibrary(libName)
 except Exception as Error:
-    print('Make First')
     exit(0)
 else:
     libReset = Lib.Reset
@@ -30,4 +31,4 @@ def Load(fileName: str):
 def Fill():
     Data = np.ndarray(dtype=np.float32, shape=(starCount[0],7))
     libFill(Data.ctypes.data_as(POINTER(c_float)))
-    return starCount[0],Data
+    return int(starCount[0]),Data

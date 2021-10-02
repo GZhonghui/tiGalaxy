@@ -7,6 +7,13 @@
 #include <memory>
 #include <vector>
 
+#define BUILD_FOR_WINDOWS
+#ifdef BUILD_FOR_WINDOWS
+#define LOADER_API __declspec(dllexport)
+#else
+#define LOADER_API
+#endif
+
 class Dark
 {
 public:
@@ -42,13 +49,13 @@ std::vector<Star> Stars;
 
 Info fileHeader;
 
-extern "C" void Reset()
+extern "C" LOADER_API void Reset()
 {
     Darks.clear();
     Stars.clear();
 }
 
-extern "C" void Load(const char* fileName, int* Cnt)
+extern "C" LOADER_API void Load(const char* fileName, int* Cnt)
 {
     Reset();
 
@@ -77,7 +84,7 @@ extern "C" void Load(const char* fileName, int* Cnt)
     fileStream.close();
 }
 
-extern "C" void Fill(float* LVM)
+extern "C" LOADER_API void Fill(float* LVM)
 {
     for(int i = 0; i < fileHeader.m_DarkCnt; ++i)
     {
