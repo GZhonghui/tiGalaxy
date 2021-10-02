@@ -4,7 +4,7 @@ import Loader
 Loader.Load('Galaxy20K.bin')
 starCnt,starData = Loader.Fill()
 
-ti.init(arch=ti.cuda)
+ti.init(arch=ti.cpu)
 
 starLocation = ti.Vector.field(3, dtype=ti.f32, shape=starCnt)
 starVelocity = ti.Vector.field(3, dtype=ti.f32, shape=starCnt)
@@ -45,7 +45,7 @@ def Forward(T):
 
 def Step():
     ComputeForce()
-    Move()
+    Forward(0.001)
 
 def main():
     Init(starData)

@@ -1,8 +1,10 @@
 import numpy as np
-import ctypes
+from ctypes import *
+
+starCount = (c_int*1)(0)
 
 try:
-    Lib = ctypes.cdll.LoadLibrary('./Loader.so')
+    Lib = cdll.LoadLibrary('./Loader.so')
 except Exception as Error:
     print('Make First')
     exit(0)
@@ -12,18 +14,20 @@ else:
     libReset.restype  = None
 
     libLoad = Lib.Load
-    libLoad.argtypes = (ctypes.c_char_p,)
+    libLoad.argtypes = (c_char_p, POINTER(c_int))
     libLoad.restype  = None
 
     libFill = Lib.Fill
-    libFill.argtypes = (ctypes.c_int_p, ctypes.c_float_p)
+    libFill.argtypes = (POINTER(c_float),)
     libFill.restype  = None
 
 def Reset():
     libReset()
 
 def Load(fileName: str):
-    libLoad(fileName.encode())
+    libLoad(fileName.encode(), starCount)
 
 def Fill():
-    return 0
+    Data = np.ndarray(dtype=np.float32, shape=(starCount[0],7))
+    libFill(Data.ctypes.data_as(POINTER(c_float)))
+    return starCount[0],Data

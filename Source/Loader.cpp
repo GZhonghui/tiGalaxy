@@ -48,7 +48,7 @@ extern "C" void Reset()
     Stars.clear();
 }
 
-extern "C" void Load(const char* fileName)
+extern "C" void Load(const char* fileName, int* Cnt)
 {
     Reset();
 
@@ -58,6 +58,8 @@ extern "C" void Load(const char* fileName)
     if(!fileStream.is_open()) return;
 
     fileStream.read((char*)&fileHeader, sizeof(Info));
+
+    *Cnt = fileHeader.m_Count;
     
     Darks.resize(fileHeader.m_DarkCnt);
     Stars.resize(fileHeader.m_StarCnt);
@@ -75,10 +77,8 @@ extern "C" void Load(const char* fileName)
     fileStream.close();
 }
 
-extern "C" void Fill(int* Cnt, float* LVM)
+extern "C" void Fill(float* LVM)
 {
-    *Cnt = fileHeader.m_Count;
-
     for(int i = 0; i < fileHeader.m_DarkCnt; ++i)
     {
         *LVM++ = Darks[i].m_Location[0];
