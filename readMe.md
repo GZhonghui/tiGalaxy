@@ -24,15 +24,10 @@ Edit Main.py:
 ```
 
 ## Galaxy
-<p>
-<img src="readMe/Scene_01.gif" height="246" />
-<img src="readMe/Scene_02.gif" height="246" />
-<img src="readMe/Scene_03.gif" height="246" />
-<img src="readMe/Scene_04.gif" height="246" />
-<img src="readMe/Scene_05.gif" height="246" />
-<img src="readMe/Scene_06.gif" height="246" />
-</p>
-
-| Scene 01 | Scene 02 | Scene 03 |
-:-:|:-:|:-:
-| ![Scene](readMe/Scene_01.gif) | ![Scene](readMe/Scene_02.gif) | ![Scene](readMe/Scene_03.gif) |
+| Scene 01 | Scene 02 |
+:-:|:-:
+| ![Scene](readMe/Scene_01.gif) | ![Scene](readMe/Scene_02.gif) |
+| Scene 03 | Scene 04 |
+| ![Scene](readMe/Scene_03.gif) | ![Scene](readMe/Scene_04.gif) |
+| Scene 05 | Scene 06 |
+| ![Scene](readMe/Scene_05.gif) | ![Scene](readMe/Scene_06.gif) |
