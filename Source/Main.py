@@ -105,8 +105,8 @@ def Forward(T: ti.f32):
         starLocation[i] += T * starVelocity[i]
 
 def Step():
-    ComputeForce()
     for i in range(subStep):
+        ComputeForce()
         Forward(subStepTime)
 
 def Export(i: int):
